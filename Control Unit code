@@ -1,0 +1,34 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use ieee.std_logic_unsigned.all;
+
+entity Control_Unit is
+    Port ( Clk : in STD_LOGIC;
+           valid_in : in STD_LOGIC;
+           RESET : in STD_LOGIC;
+           rom_addr : out STD_LOGIC_VECTOR (2 downto 0);
+           mac_init : out STD_LOGIC;
+           ram_addr : out STD_LOGIC_VECTOR (2 downto 0));
+end Control_Unit;
+
+architecture behavioral of Control_Unit is
+
+    signal counter : std_logic_vector(2 downto 0) := (others => '0');
+    
+begin
+    
+    control: process(Clk,RESET)
+    begin
+        if(RESET='1') then counter<="000"; mac_init<='0';
+        elsif(rising_edge(Clk)) then
+            if(valid_in='1') then 
+                mac_init<='1'; counter<="000";
+            else mac_init<='0'; counter<=counter+1;
+            end if;
+        end if;
+    end process control;
+    
+    rom_addr<=counter;
+    ram_addr<=counter;
+                
+end behavioral;
