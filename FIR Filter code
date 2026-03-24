@@ -1,0 +1,76 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity FIR is
+    Port ( Clk : in STD_LOGIC;
+           valid_in : in STD_LOGIC;    --becomes '1' when new data (X) is available
+           X : in STD_LOGIC_VECTOR (7 downto 0);   --new data
+           RESET : in STD_LOGIC;  --RESETS the control_unit, the valid_out signal and the RAM data with 0.
+           valid_out : out STD_LOGIC;  --becomes '1' when new output has been calculated
+           y : out STD_LOGIC_VECTOR (31 downto 0) );  --output
+end FIR;
+
+architecture hybrid of FIR is
+
+    component Control_Unit
+        Port ( Clk : in STD_LOGIC;
+           valid_in : in STD_LOGIC;
+           RESET : in STD_LOGIC;
+           rom_addr : out STD_LOGIC_VECTOR (2 downto 0);
+           mac_init : out STD_LOGIC;
+           ram_addr : out STD_LOGIC_VECTOR (2 downto 0));
+    end component;
+    
+    component RAM
+        generic (
+		data_width : integer :=8  				--- width of data (bits)
+	 );
+    port (clk  : in std_logic;
+          we   : in std_logic;						--- memory write enable
+		  en   : in std_logic;				--- operation enable
+          addr : in std_logic_vector(2 downto 0);			-- memory address
+          di   : in std_logic_vector(data_width-1 downto 0);		-- input data
+          RESET : in std_logic;
+          do   : out std_logic_vector(data_width-1 downto 0));		-- output data
+    end component;
+    
+    component ROM
+        generic (
+     coeff_width : integer :=8  				--- width of coefficients (bits)
+	 );
+    Port ( clk : in  STD_LOGIC;
+		   en : in  STD_LOGIC;				--- operation enable
+           addr : in  STD_LOGIC_VECTOR (2 downto 0);			-- memory address
+           rom_out : out  STD_LOGIC_VECTOR (coeff_width-1 downto 0));	-- output data
+    end component;
+    
+    component MAC
+        Port ( b : in STD_LOGIC_VECTOR (7 downto 0);
+           c : in STD_LOGIC_VECTOR (7 downto 0);
+           MAC_init : in STD_LOGIC;
+           Clk : in STD_LOGIC;
+           RESET : in STD_LOGIC;
+           valid_out : out STD_LOGIC;
+           a : out STD_LOGIC_VECTOR (31 downto 0));
+    end component;
+    
+    signal rom_addr_d: std_logic_vector(2 downto 0);
+    signal rom_data_d: std_logic_vector(7 downto 0);
+    signal ram_addr_d: std_logic_vector(2 downto 0);
+    signal ram_data_d: std_logic_vector(7 downto 0);
+    signal mac_d1,mac_d2: std_logic;
+
+begin
+
+    C_U_call: Control_Unit port map (Clk=>Clk,valid_in=>valid_in,RESET=>RESET,rom_addr=>rom_addr_d,mac_init=>mac_d1,ram_addr=>ram_addr_d);
+    RAM_call: RAM port map (Clk=>Clk,we=>mac_d1,en=>'1',addr=>ram_addr_d,di=>X,RESET=>RESET,do=>ram_data_d);
+    ROM_call: ROM port map (Clk=>Clk,en=>'1',addr=>rom_addr_d,rom_out=>rom_data_d);
+    MAC_call: MAC port map (Clk=>Clk,b=>rom_data_d,c=>ram_data_d,a=>y,RESET=>RESET,valid_out=>valid_out,MAC_init=>mac_d2);
+    
+    delays: process(Clk)
+    begin
+        if(rising_edge(Clk)) then mac_d2<=mac_d1;
+        end if;
+    end process delays;
+            
+end hybrid;
