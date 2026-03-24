@@ -1,0 +1,242 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use ieee.std_logic_unsigned.all;
+use IEEE.NUMERIC_STD.ALL;
+
+entity tb_FIR is
+end tb_FIR;
+
+architecture behavior of tb_FIR is
+
+    component FIR
+        Port ( Clk : in STD_LOGIC;
+           valid_in : in STD_LOGIC;    --becomes '1' when new data (X) is available
+           X : in STD_LOGIC_VECTOR (7 downto 0);   --new data
+           RESET : in STD_LOGIC;  --RESETS the control_unit, the valid_out signal and the RAM data with 0.
+           valid_out : out STD_LOGIC;  --becomes '1' when new output has been calculated
+           y : out STD_LOGIC_VECTOR (31 downto 0) );  --output
+    end component;
+
+    signal tb_Clk : std_logic;
+    signal tb_valid_in : std_logic;
+    signal tb_RESET : std_logic;
+    signal tb_valid_out : std_logic;
+    signal tb_X : std_logic_vector (7 downto 0);
+    signal tb_y : std_logic_vector (31 downto 0);
+    
+begin
+
+    uut: FIR port map (Clk=>tb_Clk,valid_in=>tb_valid_in,RESET=>tb_RESET,
+                       valid_out=>tb_valid_out,X=>tb_X,y=>tb_y);
+                       
+    clk_process : process
+    begin
+        tb_Clk <= '0';
+        wait for 5 us;
+        tb_Clk <= '1';
+        wait for 5 us;
+    end process;
+    
+    stim_proc: process
+    begin
+        tb_RESET<='0';
+        wait until falling_edge(tb_Clk);
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(208,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(to_unsigned(231,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        wait for 50 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(32,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(233,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(161,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(24,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(71,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(140,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(245,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(247,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(40,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(248,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(245,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(124,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(204,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(36,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(107,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(234,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(202,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(245,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(0,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(0,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(0,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(0,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(0,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(0,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(0,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        
+        tb_valid_in<='1';
+        tb_X<=std_logic_vector(TO_UNSIGNED(0,8));
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=x"58";
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 34 us;
+        tb_RESET<='1';
+        wait for 1 us;
+        tb_RESET<='0';
+        
+        wait until falling_edge(tb_CLK);
+        wait for 40 us;
+        
+        tb_valid_in<='1';
+        tb_X<=x"AE";
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+        tb_valid_in<='1';
+        tb_X<=x"B3";
+        wait for 10 us;
+        tb_valid_in<='0';
+        wait for 70 us;
+        
+   end process stim_proc;
+
+end behavior;
