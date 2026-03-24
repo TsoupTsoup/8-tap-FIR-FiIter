@@ -1,10 +1,10 @@
 # 8-tap-FIR-FiIter
 
-An implementation based on the architecture seen below:
+An implementation based on the architecture seen below (N=8,L=32):
 
 <img width="1136" height="527" alt="Screenshot 2026-03-24 183708" src="https://github.com/user-attachments/assets/e5c09649-a6e8-4a65-86e3-2c6bd744e6e3" />
 
-The code for each block of the filter, along with the final design, can be found in the corresponsing files.
+The code for each block of the filter, along with the final design and its testbench, can be found in the corresponsing files.
 
 
 Multiplier Accumulator Unit (MAC):
