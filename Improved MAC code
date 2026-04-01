@@ -1,0 +1,39 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use ieee.std_logic_unsigned.all;
+
+entity MAC is
+    Port ( b : in STD_LOGIC_VECTOR (7 downto 0);
+           c : in STD_LOGIC_VECTOR (7 downto 0);
+           MAC_init : in STD_LOGIC;
+           Clk : in STD_LOGIC;
+           RESET : in STD_LOGIC;
+           valid_out : out STD_LOGIC;
+           a : out STD_LOGIC_VECTOR (31 downto 0));
+end MAC;
+
+architecture behavioral of MAC is
+
+    signal dummy_a : std_logic_vector(31 downto 0);
+
+begin
+
+    calc: process(Clk,RESET)
+    variable counter : integer range 0 to 8 := 0;  --counter for the 8 cycles per result
+    
+    begin
+        if(RESET='1') then valid_out<='0'; counter:=8;
+        elsif(rising_edge(Clk)) then
+            if(MAC_init = '1') then dummy_a<=(x"0000")&(b * c); counter:=0;  --accumulator initialization
+            elsif(counter<7) then dummy_a <= ((x"0000")&(b * c)) + dummy_a; counter:=counter+1;    --update accumulator and check for counter overflow
+            end if;
+            
+            if(counter=7) then valid_out<='1';
+            elsif(counter<7) then valid_out<='0';
+            end if;
+        end if;
+    end process calc;
+    
+    a<=dummy_a;    --update the output;
+            
+end behavioral;
