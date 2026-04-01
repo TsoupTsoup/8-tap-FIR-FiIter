@@ -42,11 +42,43 @@ Schematic:
 
 FIR Filter:
 
-The filter makes use of all the above units in pretty straightforward way. The only extra work is done to delay the mac_init signal one cycle, before it reaches the MAC.
+The filter makes use of all the above units in pretty a straightforward way. The only extra work is done to delay the mac_init signal by one cycle, before it reaches the MAC.
 
 Schematic:
 <img width="1556" height="696" alt="Screenshot 2026-03-24 194139" src="https://github.com/user-attachments/assets/e3c2fd2d-12ba-4788-91cf-91c2fac3779f" />
 
 
+
+
+-----------------------------------------------------------------IMPROVED VERSION---------------------------------------------------------------------------------
+
+The need to make this filter part of an actual SoC (system on chip), lead to an improved version. Only the control unit and the MAC was modified, meaning that all the other units, along with the final architecture (the FIR itself) remained completely unchanged.
+
+Improved Control Unit:
+
+The first issue encountered was with the valid_in signal, which is handled inside the control unit. For proper operation, it was assumed that valid_in would stay 'high' for precisely one cycle, every time a new valid input data is available. However this is a very unrealistic assumption, since a real device that sends data to the filter, won't be able to change the valid_in signal every cycle. This means that when a new data appears, valid_in will stay 'high' for longer than 1 cycle (and probably longer than the 8 cycles needed for a calculation). The solution is to "tell" the control unit to finish its operation for the current calculation and then stall until a NEW data_in signal arrives. This means, wait for data_in to go 'low' and then 'high' again instead of just checking if it's 'high.
+
+Schematic:
+<img width="1563" height="533" alt="image" src="https://github.com/user-attachments/assets/3c0715e1-5e23-4b32-9114-63c2964ab773" />
+
+
+
+Improved MAC:
+
+A similar issue was encountered with the valid_out signal, which is handled inside the MAC. Again, valid_out would stay 'high' for precisely one cycle, every time a new output was calculated. This means that a device reading data from the filter, would need to be able to check the valid_out signal every single cycle, to determine data availability. This again is completely unrealistic for an external device. The solution is again to stall the MAC after a calculation (keeping valid_in 'high' and stopping the MAC from changing its output), until a new MAC_init signal arrives (meaning new input data is available).
+
+Schematic:
+<img width="1563" height="533" alt="Screenshot 2026-04-02 004606" src="https://github.com/user-attachments/assets/83b9cb59-dc23-42da-bad0-b89289c2fbfb" />
+
+
+
+
+
+-----------------------------------------------Using the filter as part of a SoC----------------------------------------------------------------------------------
+
+
+The final goal was to use this filter as part of a system, where an ARM processor can send data to the filter and receive the results from it. I will not be going into detail about how this was done, however the communication between ARM processor and FIR filter was done using the AXI4-LIte interface. Through it, the processor was able to write its data to a register, the filter would then take that data, calculate the results, write the results to a different register, from where the processor would receive them.
+
+I have included (in the corresponding file), the results from several tests I did to confirm the system works. In those tests I simply sent some data from the ARM processor to the FPFA where the filter was built, received the results from the filter and printed them to the console.
 
 
