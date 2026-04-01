@@ -68,7 +68,8 @@ Improved MAC:
 A similar issue was encountered with the valid_out signal, which is handled inside the MAC. Again, valid_out would stay 'high' for precisely one cycle, every time a new output was calculated. This means that a device reading data from the filter, would need to be able to check the valid_out signal every single cycle, to determine data availability. This again is completely unrealistic for an external device. The solution is again to stall the MAC after a calculation (keeping valid_in 'high' and stopping the MAC from changing its output), until a new MAC_init signal arrives (meaning new input data is available).
 
 Schematic:
-<img width="1563" height="533" alt="Screenshot 2026-04-02 004606" src="https://github.com/user-attachments/assets/83b9cb59-dc23-42da-bad0-b89289c2fbfb" />
+<img width="1554" height="661" alt="Screenshot 2026-04-02 004036" src="https://github.com/user-attachments/assets/ad3d5267-91e3-416a-83f3-a6dce06d6207" />
+
 
 
 
