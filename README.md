@@ -78,8 +78,6 @@ Schematic:
 -----------------------------------------------Using the filter as part of a SoC----------------------------------------------------------------------------------
 
 
-The final goal was to use this filter as part of a system, where an ARM processor can send data to the filter and receive the results from it. I will not be going into detail about how this was done, however the communication between ARM processor and FIR filter was done using the AXI4-LIte interface. Through it, the processor was able to write its data to a register, the filter would then take that data, calculate the results, write the results to a different register, from where the processor would receive them.
-
-I have included (in the corresponding file), the results from several tests I did to confirm the system works. In those tests I simply sent some data from the ARM processor to the FPFA where the filter was built, received the results from the filter and printed them to the console.
+The final goal was to use this filter as part of a system, where an ARM processor can send data to the filter and receive the results from it. I will not be going into detail about how this was done, however the communication between ARM processor and FIR filter was done using the AXI4-LIte interface. Through it, the processor was able to write its data to a register, the filter would then take that data, calculate the results and write the results to a different register from where the processor would receive them.
 
 
